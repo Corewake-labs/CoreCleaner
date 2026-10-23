@@ -581,6 +581,15 @@ class UndoIdentity(Sandbox):
         self.assertFalse((proj / "out").exists())
         self.assertTrue((self.bin / "out" / "THESIS-DRAFT.docx").exists())
 
+    def test_a_reused_inode_number_is_not_taken_for_the_moved_folder_on_linux(self):
+        # ext4 gives a freed inode number to the next new folder: same device and inode, different mtime.
+        rec = {"ino": 5, "dev": 1, "size": None, "mtime_ns": 100}
+        other = mock.Mock(st_dev=1, st_ino=5, st_size=0, st_mtime_ns=200)
+        with mock.patch.object(platform_info, "os_kind", return_value="linux"):
+            self.assertIn("not what this run moved", trash_mod._identity_problem(rec, other)[0])
+        with mock.patch.object(platform_info, "os_kind", return_value="macos"):  # APFS never reuses; Finder bumps mtime
+            self.assertEqual(trash_mod._identity_problem(rec, other), (None, None))
+
     def test_the_very_object_the_run_moved_goes_back(self):
         proj, _row, out = self.moved_out()
         res = trash_mod.undo(out["run_id"])

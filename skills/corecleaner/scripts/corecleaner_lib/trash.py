@@ -784,7 +784,12 @@ def _identity_problem(rec: dict, dest_st: os.stat_result) -> Tuple[Optional[str]
         return "the manifest has no inode and device for this item, so it cannot be proven to be the same one; refusing", None
     same_size = rec.get("size") is None or dest_st.st_size == rec["size"]
     if dest_st.st_dev == rec["dev"]:
-        if dest_st.st_ino != rec["ino"] or not same_size:
+        # ext4 and most Linux filesystems hand a freed inode number to the next new file at once, so on Linux an
+        # inode match alone can be another folder: its own mtime must match too. APFS never reuses inode numbers,
+        # and on macOS Finder rewrites a folder's mtime when it is merely browsed in the Trash, so there it is skipped.
+        reused = (platform_info.os_kind() != "macos" and _is_number(rec.get("mtime_ns"))
+                  and dest_st.st_mtime_ns != rec["mtime_ns"])
+        if dest_st.st_ino != rec["ino"] or not same_size or reused:
             return "what is at the recorded Trash location is not what this run moved; refusing", None
         return None, None
     if not _is_number(rec.get("mtime_ns")):

@@ -36,6 +36,15 @@ def _no_arrival_signal(st):
 
 _plan._stat_times = _no_arrival_signal
 
+# ---------------------------------------------------------------- no background git maintenance
+# A recent git starts `git maintenance` after a commit; its .git/objects/maintenance.lock appears and vanishes
+# while a test walks the tree to age it (FileNotFoundError on the macOS CI runner). Env config reaches every
+# git the suite starts, including those with GIT_CONFIG_GLOBAL pointed at a stub.
+import os as _os
+
+_os.environ.update({"GIT_CONFIG_COUNT": "2", "GIT_CONFIG_KEY_0": "maintenance.auto", "GIT_CONFIG_VALUE_0": "false",
+                    "GIT_CONFIG_KEY_1": "gc.auto", "GIT_CONFIG_VALUE_1": "0"})
+
 # ---------------------------------------------------------------- temp dir hygiene guard
 import atexit
 import os
