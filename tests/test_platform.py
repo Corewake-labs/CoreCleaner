@@ -491,6 +491,7 @@ class CaseProbeRealFS(TempCase):
 
     def test_state_dir_probe_matches_and_leaves_nothing_behind(self):
         state = self.tmp()
+        os.mkdir(os.path.join(state, "st"))  # the probe uses an existing state dir only; it never creates one
         with mock.patch.dict(os.environ, {common.STATE_ENV: os.path.join(state, "st")}):
             dev = os.lstat(state).st_dev
             self.assertEqual(pi._state_dir_probe(dev), self._truth(state))
@@ -951,6 +952,13 @@ class PosixVolumes(unittest.TestCase):
 
 
 class CheckAndFree(TempCase):
+    def test_case_probe_in_the_state_dir_never_creates_it(self):
+        # Reached on Linux CI, where the probes over the home folder find no pair: check must stay read-only.
+        state = os.path.join(self.tmp(), "never-created")
+        with mock.patch.dict(os.environ, {common.STATE_ENV: state}):
+            self.assertIsNone(pi._state_dir_probe(os.lstat(self.tmp()).st_dev))
+        self.assertFalse(os.path.exists(state))
+
     def test_check_contract_on_this_host(self):
         state = os.path.join(self.tmp(), "never-created")
         with mock.patch.dict(os.environ, {common.STATE_ENV: state}):

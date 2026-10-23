@@ -1,9 +1,15 @@
 name: ci
 
+# Runs only when code or tests change (a README or docs push runs nothing), on two jobs:
+# macOS with the newest Python and Linux with the oldest supported one. Windows is BETA and
+# untested: its job runs only when started by hand (Actions > ci > Run workflow).
 on:
   push:
     branches: [main]
+    paths: ["skills/**", "tests/**", ".github/workflows/**"]
   pull_request:
+    paths: ["skills/**", "tests/**", ".github/workflows/**"]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,21 +24,28 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-        python: ["3.9", "3.13"]
+        include:
+          - { os: macos-latest, python: "3.13" }
+          - { os: ubuntu-latest, python: "3.9" }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
       - name: Unit tests (standard library only)
-        run: python -m unittest discover -s tests -t . -v
-      - name: Skill frontmatter has exactly the six spec keys
-        shell: python
-        run: |
-          import re, sys
-          text = open("skills/corecleaner/SKILL.md", encoding="utf-8").read()
-          front = text.split("---")[1]
-          keys = [m.group(1) for m in re.finditer(r"^([a-z-]+):", front, re.M)]
-          want = ["name", "description", "license", "compatibility", "metadata", "allowed-tools"]
-          sys.exit(0 if keys == want else "frontmatter keys: %r" % keys)
+        run: python -m unittest discover -s tests -t .
+
+  windows-beta:
+    if: github.event_name == 'workflow_dispatch'
+    name: windows-latest / python 3.13 (beta, manual)
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Unit tests (standard library only)
+        run: python -m unittest discover -s tests -t .

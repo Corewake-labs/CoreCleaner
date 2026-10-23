@@ -425,7 +425,7 @@ def _entries_probe(directory: str, dev: int, limit: int = 256) -> Optional[bool]
 
 def _state_dir_probe(dev: int) -> Optional[bool]:
     try:
-        directory = str(common.state_dir())
+        directory = str(common.state_dir_path())  # never created here: check is read-only
         if _lstat(directory).st_dev != dev:
             return None
         fd, tmp = tempfile.mkstemp(prefix=".CaseProbe-", dir=directory)

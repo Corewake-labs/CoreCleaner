@@ -74,6 +74,7 @@ class Sandbox(unittest.TestCase):
             "CORECLEANER_STATE_DIR": str(self.state),
             "GIT_CONFIG_GLOBAL": str(cfg),
             "GIT_CONFIG_NOSYSTEM": "1",
+            "XDG_DATA_HOME": str(self.home / ".local" / "share"),  # CI runners set their own
         }
         patcher = mock.patch.dict(os.environ, env)
         patcher.start()
@@ -81,8 +82,10 @@ class Sandbox(unittest.TestCase):
         trash_ok = mock.patch.object(platform_info, "trash_available", return_value=(True, "fake"))
         trash_ok.start()
         self.addCleanup(trash_ok.stop)
-        self.bin = self.home / ".Trash"
-        self.bin.mkdir()
+        # The fake Trash sits where this OS keeps the user's own Trash, so `undo` accepts what it finds there.
+        linux = platform_info.os_kind() == "linux"
+        self.bin = self.home / ".local" / "share" / "Trash" / "files" if linux else self.home / ".Trash"
+        self.bin.mkdir(parents=True)
         self.moved = []
 
     # -- helpers

@@ -124,7 +124,10 @@ class InvCase(unittest.TestCase):
     def age_tree(self, path, days):
         for dirpath, dirs, files in os.walk(str(path), topdown=False):
             for name in files + dirs:
-                os.utime(os.path.join(dirpath, name), (self.now - days * DAY,) * 2, follow_symlinks=False)
+                try:
+                    os.utime(os.path.join(dirpath, name), (self.now - days * DAY,) * 2, follow_symlinks=False)
+                except FileNotFoundError:  # git's own lock (maintenance.lock) can vanish mid-walk
+                    pass
         os.utime(str(path), (self.now - days * DAY,) * 2)
 
     def repo(self, path, commits=1):
@@ -1185,6 +1188,7 @@ class Evidence(InvCase):
         self.assertTrue(any("rg not found" in u for u in c["evidence"]["unverified"]))
         self.assertTrue(any("rg not found" in u for u in meta["unverified"]))
 
+    @unittest.skipUnless(HAVE_RG, "needs rg: without it the search reports 'rg not found' first")
     def test_no_search_roots_is_reported_not_read_as_no_references(self):
         self.touch(self.home / ".npm" / "_cacache" / "x", 9)
         cands, meta = self.collect()

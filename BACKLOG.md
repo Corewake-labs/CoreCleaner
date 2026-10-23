@@ -7,7 +7,8 @@
 - [feito 2026-10-22] `trash` sai com 0 mesmo com DENY por item: o agente precisa ler cada status; considerar exit ≠ 0 quando algum item for negado · `corecleaner_lib/trash.py` · #correcao
 - [feito 2026-10-22] Linux: `undo` deixa `.trashinfo` órfão · `corecleaner_lib/trash.py` · #limpeza
 - [feito 2026-10-22] `.git` aninhado dentro de pasta enviada à Lixeira só é arquivado no topo (submódulo/worktree hoje é recusado) · `corecleaner_lib/archive.py` · #correcao
-- [adiado] CI verde nos 3 SOs em `Corewake-labs/CoreCleaner` · `.github/workflows/ci.yml` · #antes-do-lancamento
+- [feito 2026-10-22] CI enxuto: 2 jobs (macOS 3.13, Linux 3.9) só quando muda código ou teste; 7 falhas de ambiente corrigidas (check criava a pasta de estado no Linux, Lixeira falsa no layout macOS, lock do git sumindo no meio do walk, teste que exigia rg) · `.github/workflows/ci.yml` · #correcao
+- [adiado] Windows verde: o job `windows-beta` roda só à mão e falha em ~140 testes (beta, nunca rodado em Windows real) · `.github/workflows/ci.yml` · #antes-do-lancamento
 - [feito 2026-10-22] "possibly cited" casa nome genérico (`mine`, `theirs`) num `.log` qualquer: 6 pastas de 80 KB foram para o grupo 2 por um log do Chrome · `corecleaner_lib/inventory.py` (`_apply_refs`, índice `tail`) · #correcao
 - [feito 2026-10-22] Sobras de `mktemp -d` de agentes revisores (`$TMPDIR/tmp.*/mine|theirs`, `ct-t4-*`) aparecem como candidatos: conferir se alguma vem da suíte e limpar no `tearDown` · `tests/` · #limpeza
 - [feito 2026-10-22] Worktree com trabalho só local (branch nunca publicada de propósito) não ganha `keep_note`: hoje depende do git dizer "não publicado", sem nota do dono · `corecleaner_lib/inventory.py` · #correcao

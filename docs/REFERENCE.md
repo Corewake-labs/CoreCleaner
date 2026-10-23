@@ -71,4 +71,4 @@ Ask "which repos are biggest, move the old ones to my HD". Three commands, same 
 python3 -m unittest discover -s tests -t .
 ```
 
-Standard library only, 3.9 to current. Tests write only inside temp directories they create; the one test that uses the real Trash runs only with `CORECLEANER_REAL_TRASH=1`. CI runs the suite on macOS, Linux and Windows with Python 3.9 and 3.13. The contract for each subcommand is `docs/SPEC.md`.
+Standard library only, 3.9 to current. Tests write only inside temp directories they create; the one test that uses the real Trash runs only with `CORECLEANER_REAL_TRASH=1`. CI runs the suite when code or tests change, on macOS with Python 3.13 and Linux with Python 3.9; the Windows job (beta) runs only when started by hand. The contract for each subcommand is `docs/SPEC.md`.
