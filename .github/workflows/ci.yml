@@ -1,0 +1,38 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    env:
+      PYTHONUTF8: "1"
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        python: ["3.9", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Unit tests (standard library only)
+        run: python -m unittest discover -s tests -t . -v
+      - name: Skill frontmatter has exactly the six spec keys
+        shell: python
+        run: |
+          import re, sys
+          text = open("skills/corecleaner/SKILL.md", encoding="utf-8").read()
+          front = text.split("---")[1]
+          keys = [m.group(1) for m in re.finditer(r"^([a-z-]+):", front, re.M)]
+          want = ["name", "description", "license", "compatibility", "metadata", "allowed-tools"]
+          sys.exit(0 if keys == want else "frontmatter keys: %r" % keys)

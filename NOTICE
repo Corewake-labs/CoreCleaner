@@ -1,0 +1,24 @@
+CoreCleaner
+Copyright (c) 2026 Corewake Labs. MIT License (see LICENSE).
+
+Credits. No code from the projects below was copied; CoreCleaner is an independent
+implementation. What they gave us are ideas and a map of where things live.
+
+* luchasarie/agent-cleanup (MIT), https://github.com/luchasarie/agent-cleanup
+  The idea of a cleaner for the traces coding agents leave behind, and its
+  survey of the folders Claude Code and Codex fill up. CoreCleaner re-derived the
+  folder list as data (skills/corecleaner/references/categorias.md) and checked it
+  against the vendors' documentation.
+
+* daymade/claude-code-skills, macos-cleaner (MIT),
+  https://github.com/daymade/claude-code-skills
+  The macOS lessons that sizes lie on APFS (clones, hardlinks, local snapshots),
+  that the Trash is the safe exit, and that a git bundle is the way to archive a
+  repo before removing it.
+
+Run time dependency, downloaded only with the user's consent and only after a
+sha256 check against skills/corecleaner/references/pins.tsv:
+
+* dua-cli by Byron (MIT), https://github.com/Byron/dua-cli
+  Not bundled with CoreCleaner and not linked into it; it is run as a separate
+  program, and without it CoreCleaner falls back to a slower built-in scan.

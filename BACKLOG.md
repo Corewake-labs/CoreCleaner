@@ -1,0 +1,33 @@
+# BACKLOG
+
+- [adiado] Rodar a suíte e um fluxo real em Windows (VM ou CI `windows-latest`); Recycle Bin (`Shell.Application`, MaxCapacity, NukeOnDelete) só foi simulado · `skills/corecleaner/scripts/corecleaner_lib/trash.py` · #correcao #antes-do-lancamento
+- [adiado] Parser do `dua` nunca viu saída real (dua não instalado aqui): rodar `bootstrap --yes` num Mac de teste e conferir contra `dua aggregate -f bytes` 2.46.0 · `corecleaner_lib/scan.py` · #correcao #antes-do-lancamento
+- [adiado] `allowed-tools` do SKILL.md: conferir que o matcher do Claude Code pré-aprova `check`/`free` com o caminho fixado · `skills/corecleaner/SKILL.md` · #correcao #antes-do-lancamento
+- [feito 2026-10-22] LACUNA engana em scan parcial (`--roots`): rotular "parcial" quando as raízes não cobrem o volume · `corecleaner_lib/scan.py` · #correcao
+- [feito 2026-10-22] `trash` sai com 0 mesmo com DENY por item: o agente precisa ler cada status; considerar exit ≠ 0 quando algum item for negado · `corecleaner_lib/trash.py` · #correcao
+- [feito 2026-10-22] Linux: `undo` deixa `.trashinfo` órfão · `corecleaner_lib/trash.py` · #limpeza
+- [feito 2026-10-22] `.git` aninhado dentro de pasta enviada à Lixeira só é arquivado no topo (submódulo/worktree hoje é recusado) · `corecleaner_lib/archive.py` · #correcao
+- [adiado] CI verde nos 3 SOs em `Corewake-labs/CoreCleaner` · `.github/workflows/ci.yml` · #antes-do-lancamento
+- [feito 2026-10-22] "possibly cited" casa nome genérico (`mine`, `theirs`) num `.log` qualquer: 6 pastas de 80 KB foram para o grupo 2 por um log do Chrome · `corecleaner_lib/inventory.py` (`_apply_refs`, índice `tail`) · #correcao
+- [feito 2026-10-22] Sobras de `mktemp -d` de agentes revisores (`$TMPDIR/tmp.*/mine|theirs`, `ct-t4-*`) aparecem como candidatos: conferir se alguma vem da suíte e limpar no `tearDown` · `tests/` · #limpeza
+- [feito 2026-10-22] Worktree com trabalho só local (branch nunca publicada de propósito) não ganha `keep_note`: hoje depende do git dizer "não publicado", sem nota do dono · `corecleaner_lib/inventory.py` · #correcao
+- [feito 2026-10-22] LACUNA de ~160 GB no Mac do dono: parte é outro volume APFS e `/private`, não lido pelo scan de HOME; rotular a parte fora das raízes · `corecleaner_lib/scan.py` · #correcao
+- [feito 2026-10-22] `ask` monta no grupo 2 um "Lixeira em todos (N)" que mistura histórico, clones, mídia e caches: separar por categoria no próprio `ask` (hoje é regra no SKILL.md) · `corecleaner_lib/ask.py` · #correcao #antes-do-lancamento
+- [feito 2026-10-22] Clone raso (`--depth 1`, ex.: `~/.codex/.tmp/plugins`): `archive` falha no verify ("remote did not send all necessary objects") e o item nunca sai; o commit do enxerto ainda conta como "1 commit sem remote". Detectar `rev-parse --is-shallow-repository`: árvore limpa = sem trabalho; com trabalho = tar.gz do repo no lugar do bundle · `corecleaner_lib/archive.py`, `corecleaner_lib/gitguard.py` · #correcao #antes-do-lancamento
+
+- [feito 2026-10-22] Idade só por mtime: árvore restaurada com mtimes antigos (`cp -a`, `rsync -a`, unzip, Time Machine) parece parada há meses no minuto em que chega; ctime/birthtime quebram os fixtures (utime) e sobem com xattr do Spotlight, então ficou de fora · `corecleaner_lib/plan.py` (`_build_item`), `inventory.py` (`measure`) · #correcao (lente toctou 2026-10-22)
+- [feito 2026-10-22] Manifesto de `undo` não é assinado (plano e inventário são); registro sem `ino` pula a checagem de identidade; `_is_trash_location` aceita qualquer pasta chamada `.trash` · `corecleaner_lib/trash.py` 545-700 · #correcao
+- [feito 2026-10-22] Plano e inventário sem prazo de validade: citação (`referenced_by`), nota "keep" e processo vivo ficam congelados do dia do inventário · `corecleaner_lib/plan.py` 277-296, 660-678 · #correcao
+- [feito 2026-10-22] `undo` em volume externo falha fechado quando o `st_dev` renumera (replug); razão enganosa · `corecleaner_lib/trash.py` 655-660 · #correcao
+- [feito 2026-10-22] "processo vivo" é só cwd: `bun run dev` parado no pai do `node_modules` não protege o `node_modules` · `corecleaner_lib/trash.py` 734-795, `inventory.py` 552-642 · #correcao
+- [feito 2026-10-22] `trashed_bytes` soma tetos aparentes (clones APFS, hardlinks): nomear `apparent_bytes` e repetir a nota de ganho no resultado do `trash` · `corecleaner_lib/trash.py` 1085 · #limpeza
+- [feito 2026-10-22] Nada liga `--apply` a uma resposta humana em modo bypass; documentar ou exigir TTY/`CORECLEANER_ALLOW_APPLY` · `corecleaner_lib/trash.py` 1052, `migrate.py` 656 · #antes-do-lancamento
+- [feito 2026-10-22] stderr e `error.message` de scan/inventory/plan/ask saem sem `views.scrub` · `corecleaner.py` 186-210 · #correcao
+- [feito 2026-10-22] Clone limpo e publicado com dado ignorado grande (modelos, `.wrangler/state`) é grupo 1 e o aviso "ignored large, NOT archived" do `needs_archive` se perde em `_archive_needs` · `corecleaner_lib/plan.py` 406, `trash.py` 929-947 · #correcao
+- [feito 2026-10-22] Proteção "live" de D cobre só a unidade mais nova do projeto (`newest[proj]`); sessão antiga ainda aberta fica grupo 1 · `corecleaner_lib/inventory.py` 886-893 · #correcao
+- [feito 2026-10-22] `brew cleanup --prune=all` também remove versões antigas instaladas, não só downloads; `npx playwright|puppeteer` resolve `./node_modules/.bin` primeiro · `corecleaner_lib/plan.py` SELF_REFILLING, `inventory.py` 1155-1192 · #correcao
+- [feito 2026-10-22] "publicado" = refs remote-tracking locais, sem contato com o remoto (branch apagada no servidor ainda conta como publicada) · `corecleaner_lib/inventory.py` 476-483 · #correcao
+- [feito 2026-10-22] Lixo que nenhuma categoria vê (medido 2026-10-22 nesta máquina: 434 pastas, 41 GB dentro de repos, 30 GB de `node_modules` de projetos ativos; `.wrangler` 6,3 GB; `.build` 1,3 GB; `.venv`, `dist`, `.next`): DerivedData, simuladores, Docker, LM Studio, Gradle/Maven, Electron caches, `~/.claude/*.bak*`. Entrar como `list_only` · `corecleaner_lib/inventory.py` · #funcionalidade
+- [feito 2026-10-22] `~/corecleaner-archive` sem cota nem expiração; `protected_cut` do arquivo vira só aviso no manifesto · `corecleaner_lib/archive.py` 748-805, `trash.py` 1036 · #correcao
+- [feito 2026-10-22] `ask --lang pt` traduz as perguntas, não os `reason`/`deny` do plano (inglês na tabela) · `corecleaner_lib/ask.py`, `plan.py` · #limpeza
+- [feito 2026-10-22] Zero-width/variation selectors U+FE0E/FE0F passam no `sanitize_name` (canal de 1 bit por char) · `corecleaner_lib/safety.py` 636-665 · #limpeza

@@ -1,0 +1,17 @@
+# CoreCleaner analyzer pins. Parsed ONLY by corecleaner_lib/bootstrap.py; the agent may read it, never edit it.
+# teto: isento (registry; one row per pinned target, length is the data). Any edit needs two reviewers (supply-chain wall).
+#
+# Grammar: UTF-8, LF, TAB-separated, '#' starts a comment only at line start, blank lines ignored.
+# Columns: target  url  sha256  version  bytes
+#   target   <arch>-<os> (aarch64|x86_64)-(apple-darwin|unknown-linux-musl|pc-windows-msvc)
+#   url      https URL of the official release asset, file name == dua-v<version>-<target>.(tar.gz|zip)
+#   sha256   lowercase hex of the asset, copied from the release API `digest` field (never computed from the download that is being checked)
+#   version  dua-cli release the row pins (bootstrap installs exactly this)
+#   bytes    asset size, used as the download ceiling and shown at the consent prompt
+# Source: gh api repos/Byron/dua-cli/releases/tags/v2.46.0 (2026-10-21); all 6 assets re-downloaded and hashed, sizes and digests match.
+aarch64-apple-darwin	https://github.com/Byron/dua-cli/releases/download/v2.46.0/dua-v2.46.0-aarch64-apple-darwin.tar.gz	857af70a6be7fe3d22611a3aa082f17789435ad0b89808845ef13f85789e8e1b	2.46.0	2074781
+x86_64-apple-darwin	https://github.com/Byron/dua-cli/releases/download/v2.46.0/dua-v2.46.0-x86_64-apple-darwin.tar.gz	1fe7c6bd3cc1f3d37ee78d22a9f5ec5bd6d33eb24e5c8bf5864aa7efa03f8324	2.46.0	2262826
+x86_64-unknown-linux-musl	https://github.com/Byron/dua-cli/releases/download/v2.46.0/dua-v2.46.0-x86_64-unknown-linux-musl.tar.gz	4f284a388a063a99f938c6e0f5ea8d932868e1f9a4224622d97488f4ec671b41	2.46.0	2494930
+aarch64-unknown-linux-musl	https://github.com/Byron/dua-cli/releases/download/v2.46.0/dua-v2.46.0-aarch64-unknown-linux-musl.tar.gz	a7ba6bce1f1d16392b4c9f385e7439deda71627ed3c55eb09d5dfcbe6b481a58	2.46.0	2318544
+x86_64-pc-windows-msvc	https://github.com/Byron/dua-cli/releases/download/v2.46.0/dua-v2.46.0-x86_64-pc-windows-msvc.zip	49616d1deb36109274f19c09dd70420d45bd0c58ea1441236b65b2fd0bdc89ff	2.46.0	2171247
+aarch64-pc-windows-msvc	https://github.com/Byron/dua-cli/releases/download/v2.46.0/dua-v2.46.0-aarch64-pc-windows-msvc.zip	dc95c37c8bc02d585b607fd8c67aaa148623717a7a500e70d5604193e1495806	2.46.0	2171267

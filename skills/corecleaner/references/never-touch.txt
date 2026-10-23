@@ -1,0 +1,354 @@
+# CoreCleaner never-touch list. Parsed ONLY by corecleaner_lib/safety.py; the agent may read it, never edit it.
+# teto: isento (registry; one rule per line, length is the data). Any edit needs two reviewers (last wall).
+#
+# Grammar: UTF-8, LF. '#' starts a comment only at line start. Blank lines ignored.
+#   [all] [macos] [linux] [windows]   section header; [all] always applies, the OS section adds to it.
+#   <mode> <pattern>                  mode, whitespace, then the rest of the line (spaces allowed in pattern).
+# Modes (A = candidate after safety.normalize(); P = pattern after expansion + normalize()):
+#   tree  P   refuse A when A == P, A is under P, or A is a PARENT of P.
+#   node  P   refuse A when A == P or A is a PARENT of P; descendants stay allowed (tidy inside, never the folder).
+#   name  N   refuse A when ANY path component of A matches N (fnmatch on one component, no '/').
+# Pattern syntax:
+#   ~                   HOME (USERPROFILE on Windows).
+#   $VAR ${VAR} %VAR%   environment variable, tree/node only and only at the very start of the pattern
+#                       ('$' or '%' anywhere else, and every `name` pattern, is literal); unset = rule skipped, never an error.
+#   * ? [seq]           fnmatch inside ONE component, never across '/'.
+#   <root>              every filesystem root and drive root (/, C:/, D:/); node mode only.
+#   '/' is the only separator, Windows included. Matching: realpath, NFC, casefold on case-insensitive
+#   filesystems, Windows 8.3 names and the \\?\ prefix resolved by safety.normalize().
+# Code, not this file, handles: cloud placeholders, live processes, dirty repos, symlink targets.
+# Agent history and caches (~/.claude/projects, file-history, ~/.codex/sessions, worktrees) are NOT listed: they are the job.
+
+[all]
+# Home and user-data folders: tidy inside, never the folder itself
+node <root>
+node ~
+node ~/Desktop
+node ~/Documents
+node ~/Downloads
+node ~/Pictures
+node ~/Music
+node ~/Movies
+node ~/Videos
+node ~/Public
+node ~/Templates
+node ~/.config
+node ~/.local
+node ~/.local/share
+node ~/.cache
+
+# Credentials, keys, tokens
+tree ~/.ssh
+tree ~/.gnupg
+tree $GNUPGHOME
+tree ~/.aws
+tree ~/.azure
+tree ~/.kube
+tree ~/.docker
+tree ~/.oci
+tree ~/.password-store
+tree ~/.config/gcloud
+tree ~/.config/gh
+tree ~/.config/op
+tree ~/.config/rclone
+tree ~/.config/doctl
+tree ~/.config/configstore
+tree ~/.config/.wrangler
+tree ~/.wrangler
+tree ~/.netrc
+tree ~/.npmrc
+tree ~/.pypirc
+tree ~/.git-credentials
+tree ~/.vault-token
+tree ~/.gem/credentials
+tree ~/.m2/settings.xml
+tree ~/.gradle/gradle.properties
+tree ~/.cargo/credentials
+tree ~/.cargo/credentials.toml
+tree ~/.terraform.d/credentials.tfrc.json
+
+# Coding agents: config, credentials, memory, instructions (parents become protected, so never the whole dir)
+node ~/.claude
+node ~/.codex
+node $CLAUDE_CONFIG_DIR
+node $CODEX_HOME
+tree ~/.claude.json
+tree ~/.claude/.credentials.json
+tree ~/.claude/settings.json
+tree ~/.claude/settings.local.json
+tree ~/.claude/CLAUDE.md
+tree ~/.claude/keybindings.json
+tree ~/.claude/memory
+tree ~/.claude/skills
+tree ~/.claude/commands
+tree ~/.claude/agents
+tree ~/.claude/rules
+tree ~/.claude/hooks
+tree ~/.claude/plugins
+tree ~/.claude/tokens
+tree ~/.claude/projects/*/memory
+tree $CLAUDE_CONFIG_DIR/.credentials.json
+tree $CLAUDE_CONFIG_DIR/settings.json
+tree $CLAUDE_CONFIG_DIR/settings.local.json
+tree $CLAUDE_CONFIG_DIR/CLAUDE.md
+tree $CLAUDE_CONFIG_DIR/memory
+tree $CLAUDE_CONFIG_DIR/skills
+tree $CLAUDE_CONFIG_DIR/tokens
+tree ~/.codex/auth.json
+tree ~/.codex/config.toml
+tree ~/.codex/AGENTS.md
+tree ~/.codex/skills
+tree ~/.codex/prompts
+tree ~/.codex/rules
+tree ~/.codex/memories
+tree $CODEX_HOME/auth.json
+tree $CODEX_HOME/config.toml
+tree $CODEX_HOME/AGENTS.md
+tree $CODEX_HOME/skills
+tree $CODEX_HOME/memories
+tree ~/.agents
+tree ~/.gemini/oauth_creds.json
+
+# Cloud-synced folders: list only, a move here deletes in the cloud
+tree ~/Dropbox
+tree ~/Dropbox (*)
+tree ~/OneDrive*
+tree ~/Google Drive
+tree ~/GoogleDrive
+tree ~/Box
+tree ~/Box Sync
+tree ~/iCloud Drive
+tree ~/iCloudDrive
+tree ~/pCloudDrive
+tree ~/MEGA
+tree ~/Nextcloud
+tree ~/ownCloud
+tree ~/Creative Cloud Files*
+
+# Names protected at any depth (also covers a copy of HOME under another path)
+name .git
+name .ssh
+name .gnupg
+name .aws
+name .kube
+name .env
+name .env.*
+name .npmrc
+name .netrc
+name .pypirc
+name .git-credentials
+name .credentials.json
+name auth.json
+name oauth_creds.json
+name id_rsa*
+name id_dsa*
+name id_ecdsa*
+name id_ed25519*
+name *.pem
+name *.key
+name *.p12
+name *.pfx
+name .dev.vars
+name .envrc
+name *.tfstate
+name *.tfvars
+name credentials.json
+name service-account*.json
+name .pgpass
+name .htpasswd
+name Login Data
+name Cookies
+name Local State
+name key4.db
+name logins.json
+name *.ppk
+name *.gpg
+name *.kdbx
+name *.keychain
+name *.keychain-db
+name *.photoslibrary
+name *.sparsebundle
+name *.sparseimage
+name .Trash
+name .Trashes
+name .Trash-*
+name $RECYCLE.BIN
+
+[macos]
+# System
+tree /System
+tree /usr
+tree /bin
+tree /sbin
+tree /etc
+tree /private/etc
+tree /Library
+tree /Applications
+tree /opt/homebrew
+tree /private/var/db
+tree /private/var/root
+tree /private/var/vm
+node /Users
+node /Volumes
+node /Volumes/*
+node /opt
+node /private
+node /private/var
+node /private/tmp
+node /private/var/folders
+node /private/var/folders/*
+node /private/var/folders/*/*
+node /private/var/folders/*/*/T
+node /private/var/folders/*/*/C
+node /private/var/folders/*/*/0
+node /private/var/folders/*/*/X
+name .Spotlight-V100
+name .fseventsd
+name .DocumentRevisions-V100
+name .MobileBackups
+name Backups.backupdb
+
+# User Library: the folders themselves are protected, their children are not
+node ~/Library
+node ~/Library/Application Support
+node ~/Library/Caches
+node ~/Library/Preferences
+node ~/Library/Containers
+node ~/Library/Group Containers
+node ~/Library/Logs
+node ~/Applications
+
+# Keychains, sync, personal data, app secrets
+tree ~/.Trash
+tree ~/Library/Keychains
+tree ~/Library/Mobile Documents
+tree ~/Library/CloudStorage
+tree ~/Library/Mail
+tree ~/Library/Messages
+tree ~/Library/Safari
+tree ~/Library/Cookies
+tree ~/Library/Accounts
+tree ~/Library/Calendars
+tree ~/Library/Reminders
+tree ~/Library/Photos
+tree ~/Library/Preferences/.wrangler
+tree ~/Library/Application Support/AddressBook
+tree ~/Library/Application Support/CloudDocs
+tree ~/Library/Application Support/com.apple.TCC
+tree ~/Library/Application Support/1Password
+tree ~/Library/Application Support/Bitwarden
+tree ~/Library/Group Containers/group.com.apple.*
+tree ~/Library/Group Containers/*.com.agilebits
+
+# Browser profiles (logins, cookies)
+tree ~/Library/Application Support/Google/Chrome
+tree ~/Library/Application Support/Chromium
+tree ~/Library/Application Support/Firefox
+tree ~/Library/Application Support/BraveSoftware
+tree ~/Library/Application Support/Microsoft Edge
+tree ~/Library/Application Support/Arc
+tree ~/Library/Application Support/Vivaldi
+tree ~/Library/Application Support/com.operasoftware.Opera
+
+[linux]
+# System
+tree /usr
+tree /bin
+tree /sbin
+tree /lib
+tree /lib32
+tree /lib64
+tree /libx32
+tree /etc
+tree /boot
+tree /dev
+tree /proc
+tree /sys
+tree /run
+tree /root
+tree /snap
+tree /lost+found
+tree /var/lib
+tree /var/cache
+tree /var/log
+tree /mnt
+node /home
+node /var
+node /opt
+node /srv
+node /tmp
+node /media
+node /media/*
+name lost+found
+
+# User data and secrets
+node ~/.var
+node ~/.var/app
+node ~/snap
+tree ~/.local/share/Trash
+tree ~/.local/share/keyrings
+tree ~/.local/share/gnome-keyring
+tree ~/.config/1Password
+tree ~/.config/Bitwarden
+
+# Browser profiles (logins, cookies)
+tree ~/.config/google-chrome
+tree ~/.config/chromium
+tree ~/.config/BraveSoftware
+tree ~/.config/microsoft-edge
+tree ~/.config/vivaldi
+tree ~/.mozilla
+
+[windows]
+# System
+tree %SystemRoot%
+tree C:/Windows
+tree %ProgramFiles%
+tree %ProgramFiles(x86)%
+tree %ProgramW6432%
+tree C:/Program Files
+tree C:/Program Files (x86)
+tree %ProgramData%/Microsoft
+tree %SystemDrive%/Recovery
+tree %SystemDrive%/Boot
+tree %SystemDrive%/System Volume Information
+tree %SystemDrive%/$Recycle.Bin
+node %SystemDrive%/Users
+node %ProgramData%
+name System Volume Information
+name NTUSER.DAT*
+name pagefile.sys
+name hiberfil.sys
+name swapfile.sys
+name DumpStack.log*
+
+# User profile: the folders themselves are protected, their children are not
+node %APPDATA%
+node %LOCALAPPDATA%
+node %APPDATA%/Microsoft
+node %LOCALAPPDATA%/Microsoft
+node %LOCALAPPDATA%/Packages
+node %LOCALAPPDATA%/Temp
+
+# Credentials, sync, app secrets
+tree %APPDATA%/Microsoft/Protect
+tree %APPDATA%/Microsoft/Credentials
+tree %APPDATA%/Microsoft/Crypto
+tree %APPDATA%/Microsoft/SystemCertificates
+tree %APPDATA%/Microsoft/Windows
+tree %LOCALAPPDATA%/Microsoft/Credentials
+tree %LOCALAPPDATA%/Microsoft/Vault
+tree %APPDATA%/gnupg
+tree %APPDATA%/GitHub CLI
+tree %LOCALAPPDATA%/1Password
+tree %APPDATA%/Bitwarden
+tree %OneDrive%
+tree %OneDriveConsumer%
+tree %OneDriveCommercial%
+
+# Browser profiles (logins, cookies)
+tree %LOCALAPPDATA%/Google/Chrome
+tree %LOCALAPPDATA%/Microsoft/Edge
+tree %LOCALAPPDATA%/BraveSoftware
+tree %LOCALAPPDATA%/Vivaldi
+tree %APPDATA%/Mozilla
