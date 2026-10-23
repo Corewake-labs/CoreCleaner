@@ -1,16 +1,12 @@
-# CoreCleaner
+<p align="center"><img src="assets/icon-512.png" width="112" alt="CoreCleaner icon: a broom with a small green sparkle"></p>
 
-A skill for Claude Code and Codex that finds the disk space coding agents leave behind and clears only what you approve.
+<h1 align="center">CoreCleaner</h1>
 
-[English](#english) · [Português](#português) · [Español](#español)
+<p align="center">A skill for Claude Code and Codex that finds the disk space coding agents leave behind and clears only what you approve.</p>
 
-```text
-you    › my disk is full, use corecleaner
-agent  › 38 items, about 1.6 GB you could clear. Open the page, tick what goes, paste the reply here.
-you    › CoreCleaner plan 4f2a9c1e0b7d
-         Trash: c1a2b3c c4d5e6f
-agent  › Dry run: 2 items, 410 MB, nothing changed since the plan. Move them to the Trash?
-```
+<p align="center"><a href="#english">English</a> · <a href="#português">Português</a> · <a href="#español">Español</a></p>
+
+![Simulated Claude Code session: corecleaner reads the disk, offers 38 items worth about 1.7 GB, the user pastes the reply from the page, the agent shows a dry run and moves 21 items to the Trash](assets/demo-session.svg)
 
 ---
 
@@ -42,6 +38,8 @@ Or in one line for both: `npx skills add corewake-labs/CoreCleaner -a claude-cod
 2. The first time, it asks two things: whether to install [dua](https://github.com/Byron/dua-cli), a fast disk analyzer (one pinned build, checksum verified), and which language you want (English or Portuguese). It never asks again.
 3. It reads the disk and lists candidates. Read-only, a few minutes.
 4. It gives you a page, "Choose what to clean". Each kind of leftover has two lines in plain words, the safe ones come ticked, and a bar adds up what you picked. Press "Copy reply" and paste it in the chat. If you prefer, the agent asks in rounds of up to 4 questions instead.
+
+   ![The "Choose what to clean" page with made-up items: tool caches and a forgotten clone ticked, a bar with 2 selected, 801 MiB, and the reply text ready to copy](assets/choose-page.png)
 5. The agent shows a dry run, asks once more, then moves the items to the Trash. Changed your mind? Ask for `undo`: it brings them back while the Trash is not emptied.
 6. Empty the Trash yourself when you are sure. That is when the space comes back.
 
@@ -57,6 +55,8 @@ Or in one line for both: `npx skills add corewake-labs/CoreCleaner -a claude-cod
 On a Mac, Time Machine takes a local snapshot of the internal disk before each backup, even when backups go to an external drive. There is no switch to turn that off. macOS manages these snapshots: it keeps them for about a day and deletes them as soon as an app needs the space, and Finder already counts that space as available. After a day of heavy changes they can hold tens of GB (48 GB on the author's Mac).
 
 If you want the space right now, run `tmutil deletelocalsnapshots /`. To keep them small, leave the backup drive connected so backups finish, or set Time Machine to back up manually.
+
+![Simulated session: after the cleanup the agent shows where the rest of the disk is, explains the Time Machine local snapshots, and the user deletes them with tmutil](assets/demo-space.svg)
 
 ---
 
@@ -88,6 +88,8 @@ Ou numa linha só para os dois: `npx skills add corewake-labs/CoreCleaner -a cla
 2. Na primeira vez ele pergunta duas coisas: se pode instalar o [dua](https://github.com/Byron/dua-cli), um analisador de disco rápido (uma versão fixa, com checksum conferido), e em que idioma você quer (português ou inglês). Não pergunta de novo.
 3. Ele lê o disco e lista os candidatos. Só leitura, alguns minutos.
 4. Ele te entrega uma página, "Escolher o que limpar". Cada tipo de sobra tem duas linhas em linguagem simples, os seguros já vêm marcados e uma barra soma o que você escolheu. Clique em "Copiar resposta" e cole no chat. Se preferir, o agente pergunta em rodadas de até 4 perguntas.
+
+   ![A página de escolha com itens fictícios: caches de ferramentas e um clone esquecido marcados, a barra com 2 selecionados, 801 MiB, e o texto da resposta pronto para copiar](assets/choose-page.png)
 5. O agente mostra uma simulação, pergunta mais uma vez e só então move os itens para a Lixeira. Mudou de ideia? Peça o `undo`: ele devolve tudo enquanto a Lixeira não for esvaziada.
 6. Esvazie a Lixeira você mesmo quando tiver certeza. É aí que o espaço volta.
 
@@ -103,6 +105,8 @@ Ou numa linha só para os dois: `npx skills add corewake-labs/CoreCleaner -a cla
 No Mac, o Time Machine tira uma foto local do disco interno antes de cada backup, mesmo quando o backup vai para um HD externo. Não existe opção para desligar isso. O macOS cuida dessas fotos sozinho: guarda por cerca de um dia e apaga assim que algum app precisa do espaço, e o Finder já conta esse espaço como disponível. Depois de um dia de muitas mudanças elas podem segurar dezenas de GB (48 GB no Mac do autor).
 
 Se quiser o espaço na hora, rode `tmutil deletelocalsnapshots /`. Para elas ficarem pequenas, deixe o HD do backup conectado para os backups terminarem, ou mude o Time Machine para backup manual.
+
+![Sessão simulada: depois da limpeza o agente mostra onde está o resto do disco, explica os snapshots locais do Time Machine e o usuário os apaga com tmutil](assets/demo-space.svg)
 
 ---
 
@@ -134,6 +138,8 @@ O en una sola línea para los dos: `npx skills add corewake-labs/CoreCleaner -a 
 2. La primera vez pregunta dos cosas: si puede instalar [dua](https://github.com/Byron/dua-cli), un analizador de disco rápido (una versión fija, con checksum verificado), y en qué idioma lo quieres (por ahora, inglés o portugués). No vuelve a preguntar.
 3. Lee el disco y lista los candidatos. Solo lectura, unos minutos.
 4. Te da una página, "Choose what to clean" (en inglés o portugués). Cada tipo de resto tiene dos líneas en palabras sencillas, los seguros ya vienen marcados y una barra suma lo que elegiste. Pulsa "Copy reply" y pégala en el chat. Si prefieres, el agente pregunta en rondas de hasta 4 preguntas.
+
+   ![La página para elegir con elementos inventados: cachés de herramientas y un clon olvidado marcados, la barra con 2 seleccionados, 801 MiB, y el texto de respuesta listo para copiar](assets/choose-page.png)
 5. El agente muestra una simulación, pregunta una vez más y solo entonces mueve los elementos a la Papelera. ¿Cambiaste de idea? Pide `undo`: lo devuelve todo mientras no vacíes la Papelera.
 6. Vacía la Papelera tú mismo cuando estés seguro. Ahí es cuando vuelve el espacio.
 
@@ -149,6 +155,8 @@ O en una sola línea para los dos: `npx skills add corewake-labs/CoreCleaner -a 
 En un Mac, Time Machine toma una instantánea local del disco interno antes de cada copia, incluso cuando la copia va a un disco externo. No hay opción para apagarlo. macOS gestiona esas instantáneas solo: las guarda más o menos un día y las borra en cuanto una app necesita el espacio, y el Finder ya cuenta ese espacio como disponible. Tras un día de muchos cambios pueden ocupar decenas de GB (48 GB en el Mac del autor).
 
 Si quieres el espacio ya, ejecuta `tmutil deletelocalsnapshots /`. Para que se queden pequeñas, deja conectado el disco de la copia para que las copias terminen, o pon Time Machine en copia manual.
+
+![Sesión simulada: tras la limpieza el agente muestra dónde está el resto del disco, explica las instantáneas locales de Time Machine y el usuario las borra con tmutil](assets/demo-space.svg)
 
 ---
 

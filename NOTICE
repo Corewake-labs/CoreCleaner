@@ -22,3 +22,8 @@ sha256 check against skills/corecleaner/references/pins.tsv:
 * dua-cli by Byron (MIT), https://github.com/Byron/dua-cli
   Not bundled with CoreCleaner and not linked into it; it is run as a separate
   program, and without it CoreCleaner falls back to a slower built-in scan.
+
+README artwork:
+
+* Phosphor Icons (MIT), https://phosphoricons.com
+  The broom and sparkle glyphs in assets/icon.svg.
